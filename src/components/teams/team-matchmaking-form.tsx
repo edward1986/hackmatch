@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -10,7 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { TeamMatchmakingSchema, findTeammatesAction, type TeamMatchmakingResult } from '@/lib/actions';
+import { findTeammatesAction } from '@/lib/actions';
+import { TeamMatchmakingSchema, type TeamMatchmakingResult } from '@/lib/schemas';
 import { mockAvailableTeammates, mockUserParticipant } from '@/lib/mock-data'; // For available teammates pool
 import { SuggestedTeammateCard } from './suggested-teammate-card';
 import { Loader2, LightbulbIcon, AlertTriangleIcon } from 'lucide-react';
@@ -41,8 +43,8 @@ export function TeamMatchmakingForm({ hackathonId, hackathonDescription }: TeamM
   const onSubmit = (values: z.infer<typeof TeamMatchmakingSchema>) => {
     setSuggestions(null); // Clear previous suggestions
     const formData = new FormData();
-    formData.append('skills', values.skills.join(', '));
-    formData.append('interests', values.interests.join(', '));
+    formData.append('skills', values.skills.join(', ')); // RHF provides it as an array due to transform
+    formData.append('interests', values.interests.join(', ')); // RHF provides it as an array due to transform
 
     startTransition(async () => {
       // Filter out current user from available teammates if they exist in the mock list
@@ -63,13 +65,29 @@ export function TeamMatchmakingForm({ hackathonId, hackathonDescription }: TeamM
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="skills">Your Skills (comma-separated)</Label>
-              <Textarea id="skills" {...form.register('skills')} placeholder="e.g., React, Python, UI Design" className="min-h-[80px]" />
+              <Textarea 
+                id="skills" 
+                {...form.register('skills', { 
+                  setValueAs: value => value.split(',').map((s:string) => s.trim()).filter((s:string) => s) 
+                })} 
+                defaultValue={currentUserSkills} // Use defaultValue for initial display of string
+                placeholder="e.g., React, Python, UI Design" 
+                className="min-h-[80px]" 
+              />
               {form.formState.errors.skills && <p className="text-sm text-destructive">{form.formState.errors.skills.message}</p>}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="interests">Your Interests (comma-separated)</Label>
-              <Textarea id="interests" {...form.register('interests')} placeholder="e.g., AI, Healthcare, Gaming" className="min-h-[80px]" />
+              <Textarea 
+                id="interests" 
+                {...form.register('interests', { 
+                  setValueAs: value => value.split(',').map((s:string) => s.trim()).filter((s:string) => s) 
+                })} 
+                defaultValue={currentUserInterests} // Use defaultValue for initial display of string
+                placeholder="e.g., AI, Healthcare, Gaming" 
+                className="min-h-[80px]" 
+              />
               {form.formState.errors.interests && <p className="text-sm text-destructive">{form.formState.errors.interests.message}</p>}
             </div>
           </CardContent>

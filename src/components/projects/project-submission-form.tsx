@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useFormState, useFormStatus } from 'react-dom';
@@ -11,7 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { SubmitProjectSchema, submitProjectAction, type SubmitProjectFormState } from '@/lib/actions';
+import { submitProjectAction } from '@/lib/actions';
+import { SubmitProjectSchema, type SubmitProjectFormState } from '@/lib/schemas';
 import { Loader2, UploadCloudIcon, FileIcon, XIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 

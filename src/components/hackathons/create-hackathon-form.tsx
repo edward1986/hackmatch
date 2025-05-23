@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useFormState, useFormStatus } from 'react-dom';
@@ -14,7 +15,8 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CreateHackathonSchema, createHackathonAction, type CreateHackathonFormState } from '@/lib/actions';
+import { createHackathonAction } from '@/lib/actions';
+import { CreateHackathonSchema, type CreateHackathonFormState } from '@/lib/schemas';
 import { cn } from '@/lib/utils';
 import { CalendarIcon, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
