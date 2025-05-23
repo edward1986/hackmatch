@@ -1,9 +1,21 @@
+
 'use server';
 
 import { z } from 'zod';
 import { suggestTeammates, type SuggestTeammatesInput, type SuggestTeammatesOutput } from '@/ai/flows/team-matchmaking';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+
+// Helper function for transforming comma-separated strings to array
+function processStringToArray(val: string): string[] {
+  // Zod's z.string().min(1) should ensure `val` is a non-empty string here.
+  return val.split(',').map(s => s.trim()).filter(s => s);
+}
+
+// Helper function for refine
+function isEndDateAfterStartDate(data: { startDate: Date, endDate: Date }): boolean {
+  return data.endDate > data.startDate;
+}
 
 // Schema for Create Hackathon Form
 export const CreateHackathonSchema = z.object({
@@ -13,7 +25,7 @@ export const CreateHackathonSchema = z.object({
   prizes: z.string().min(5, 'Prizes description must be at least 5 characters'),
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
-}).refine(data => data.endDate > data.startDate, {
+}).refine(isEndDateAfterStartDate, {
   message: "End date must be after start date",
   path: ["endDate"],
 });
@@ -123,8 +135,8 @@ export async function submitProjectAction(
 
 // Schema for Team Matchmaking Form
 export const TeamMatchmakingSchema = z.object({
-  skills: z.string().min(1, "Please enter at least one skill").transform(val => val.split(',').map(s => s.trim()).filter(s => s)),
-  interests: z.string().min(1, "Please enter at least one interest").transform(val => val.split(',').map(s => s.trim()).filter(s => s)),
+  skills: z.string().min(1, "Please enter at least one skill").transform(processStringToArray),
+  interests: z.string().min(1, "Please enter at least one interest").transform(processStringToArray),
 });
 
 export type TeamMatchmakingResult = SuggestTeammatesOutput & { success: boolean; message?: string; errors?: any };
