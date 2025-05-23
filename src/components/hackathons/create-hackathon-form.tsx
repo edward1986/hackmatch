@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useFormStatus } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -38,7 +38,7 @@ export function CreateHackathonForm() {
   const { toast } = useToast();
 
   const initialState: CreateHackathonFormState = { message: '', success: false };
-  const [state, formAction] = useFormState(createHackathonAction, initialState);
+  const [state, formAction] = useActionState(createHackathonAction, initialState);
 
   const form = useForm<z.infer<typeof CreateHackathonSchema>>({
     resolver: zodResolver(CreateHackathonSchema),
